@@ -1,0 +1,10 @@
+* {
+    background-color: white;
+    color: black;
+    font-family: sans-serif;
+    margin: 30px;
+}
+
+#title {
+    font-size: 32px;
+}
