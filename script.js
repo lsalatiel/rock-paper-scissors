@@ -1,45 +1,67 @@
-playGame();
+let userChoice = undefined;
 
-function playGame() {
-    let matches = 0;
-    let wins = 0;
-    let losses = 0;
+const rock = document.querySelector('#rock-btn');
+const paper = document.querySelector('#paper-btn');
+const scissors = document.querySelector('#scissors-btn');
 
-    while(true) {
-        let userChoice = prompt("Enter your choice [R - rock, P - paper, S - scissors, E - exit]: ");
-        let computerChoice = getComputerChoice();
-        
-        userChoice = userChoice.toUpperCase();
+rock.addEventListener('click', () => { userChoice = 'R'; playGame(userChoice); });
+paper.addEventListener('click', () => { userChoice = 'P'; playGame(userChoice); });
+scissors.addEventListener('click', () => { userChoice = 'S'; playGame(userChoice); });
 
-        if(userChoice != "R" && userChoice != "P" && userChoice != "S" && userChoice != 'E') {
-            console.log("Invalid choice. Try again.");
-            continue;
-        } else if(userChoice == 'E') {
-            console.log("End of game.");
+let matches = 0;
+let wins = 0;
+let losses = 0;
 
-            if(wins > losses) {
-                console.log("YOU WON!")
-            } else if(wins < losses) {
-                console.log("You lost.")
-            } else {
-                console.log("It's a DRAW.")
-            }
-            
-            console.log(`You have played ${matches}, won ${wins} and lost ${losses}!`);
-            break;
-        }
+function playGame(userChoice) {
+    let computerChoice = getComputerChoice();
 
-        let result = playRound(userChoice, computerChoice);
+    let resultText = playRound(userChoice, computerChoice);
 
-        console.log(result);
+    const resultDiv = document.querySelector('#result');
 
-        if(result.slice(0, 8) == "You win!") {
-            wins++;
-        } else if(result.slice(0, 9) == "You lose!") {
-            losses++;
-        }
-        matches++;
+    const result = document.createElement('p');
+    result.textContent = resultText;
+    if(matches == 0)
+        resultDiv.innerHTML = "";
+
+    if(resultText.slice(0, 8) == "You win!") {
+        wins++;
+        result.style.color = "#04AA6D";
+    } else if(resultText.slice(0, 9) == "You lose!") {
+        losses++;
+        result.style.color = "#f44336";
     }
+    matches++;
+
+    resultDiv.appendChild(result);
+
+    if(wins == 5 || losses == 5) {
+        setTimeout(() => { resetGame(resultDiv) }, 400);
+    }
+}
+
+function resetGame(resultDiv) {
+    resultDiv.innerHTML = ""
+    const final = document.createElement('p');
+
+    if(wins > losses) {
+        final.textContent = "End of game. YOU WON!";
+        final.style.color = "#04AA6D";
+    } else {
+        final.textContent = "End of game. You lost.";
+        final.style.color = "#f44336";
+    }
+    final.style.fontSize = "2em";
+    resultDiv.appendChild(final);
+
+    const stats = document.createElement('p');
+    stats.textContent = `You have played ${matches}, won ${wins} and lost ${losses}!`;
+    stats.style.fontSize = "1.2em";
+    resultDiv.appendChild(stats);
+
+    matches = 0;
+    wins = 0;
+    losses = 0;
 }
 
 function playRound(userChoice, computerChoice) {
@@ -49,7 +71,7 @@ function playRound(userChoice, computerChoice) {
         } else if(computerChoice == "Paper") {
             return ("You lose! Paper beats Rock");
         } else { // scissors
-            return ("You win! Paper beats Rock");
+            return ("You win! Rock beats Scissors");
         }
     }
 
